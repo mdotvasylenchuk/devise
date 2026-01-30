@@ -13,7 +13,12 @@ module Devise
     end
 
     # Force routes to be loaded if we are doing any eager load.
-    config.before_eager_load do |app|
+    # Fixed: Use after_initialize instead of before_eager_load to ensure
+    # ActiveRecord::Base is fully initialized with all class attributes
+    # (including has_many_inversing) before loading routes that may
+    # trigger model autoloading.
+    # See: https://github.com/heartcombo/devise/issues/XXXX
+    config.after_initialize do |app|
       app.reload_routes! if Devise.reload_routes
     end
 
